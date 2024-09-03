@@ -1,10 +1,10 @@
-﻿// EmployeeList.aspx.cs
-using System;
+﻿using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using EmployeeManagementSystem.Services;
 using EmployeeManagementSystem.Models;
 using System.Collections.Generic;
+using System.Configuration;
 
 namespace EmployeeManagementSystem
 {
@@ -14,7 +14,7 @@ namespace EmployeeManagementSystem
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            _employeeService = new EmployeeService(System.Configuration.ConfigurationManager.ConnectionStrings["EmployeeDB"].ConnectionString);
+            _employeeService = new EmployeeService(ConfigurationManager.ConnectionStrings["EmployeeDB"].ConnectionString);
             if (!IsPostBack)
             {
                 ViewState["SortExpression"] = "EmployeeID";

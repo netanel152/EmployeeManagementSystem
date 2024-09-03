@@ -4,7 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using EmployeeManagementSystem.Models;
 
-namespace EmployeeManagementSystem.Data
+namespace EmployeeManagementSystem.Repositories
 {
     public class EmployeeRepository
     {

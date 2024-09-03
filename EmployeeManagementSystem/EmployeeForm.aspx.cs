@@ -1,8 +1,8 @@
-﻿// EmployeeForm.aspx.cs
-using System;
+﻿using System;
 using EmployeeManagementSystem.Models;
 using EmployeeManagementSystem.Services;
 using System.Web.UI;
+using System.Configuration;
 
 namespace EmployeeManagementSystem
 {
@@ -12,7 +12,7 @@ namespace EmployeeManagementSystem
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            _employeeService = new EmployeeService(System.Configuration.ConfigurationManager.ConnectionStrings["EmployeeDB"].ConnectionString);
+            _employeeService = new EmployeeService(ConfigurationManager.ConnectionStrings["EmployeeDB"].ConnectionString);
             if (!IsPostBack)
             {
                 if (Request.QueryString["EmployeeID"] != null)

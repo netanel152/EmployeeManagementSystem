@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using EmployeeManagementSystem.Data;
+using EmployeeManagementSystem.Repositories;
 using EmployeeManagementSystem.Models;
 
 namespace EmployeeManagementSystem.Services
