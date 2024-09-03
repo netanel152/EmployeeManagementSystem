@@ -12,7 +12,6 @@
             </div>
         </div>
 
-        <!-- GridView with Paging, Sorting enabled, and Sort Direction Indicator -->
         <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="EmployeeID"
             PageSize="10" CssClass="table table-striped table-bordered text-center"
             EmptyDataText="No employees found." AllowPaging="True" AllowSorting="True"

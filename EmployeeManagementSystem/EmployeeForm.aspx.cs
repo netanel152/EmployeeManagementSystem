@@ -1,15 +1,18 @@
-﻿using System;
-using System.Data.SqlClient;
+﻿// EmployeeForm.aspx.cs
+using System;
+using EmployeeManagementSystem.Models;
+using EmployeeManagementSystem.Services;
 using System.Web.UI;
 
 namespace EmployeeManagementSystem
 {
     public partial class EmployeeForm : Page
     {
-        private string _connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["EmployeeDB"].ConnectionString;
+        private EmployeeService _employeeService;
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            _employeeService = new EmployeeService(System.Configuration.ConfigurationManager.ConnectionStrings["EmployeeDB"].ConnectionString);
             if (!IsPostBack)
             {
                 if (Request.QueryString["EmployeeID"] != null)
@@ -23,25 +26,16 @@ namespace EmployeeManagementSystem
 
         private void LoadEmployee(int employeeId)
         {
-            string query = "SELECT * FROM Employees WHERE EmployeeID = @EmployeeID";
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionString))
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                Employee employee = _employeeService.GetEmployeeById(employeeId);
+                if (employee != null)
                 {
-                    cmd.Parameters.AddWithValue("@EmployeeID", employeeId);
-                    con.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            txtFirstName.Text = reader["FirstName"].ToString();
-                            txtLastName.Text = reader["LastName"].ToString();
-                            txtEmail.Text = reader["Email"].ToString();
-                            txtPhone.Text = reader["Phone"].ToString();
-                            txtHireDate.Text = Convert.ToDateTime(reader["HireDate"]).ToString("yyyy-MM-dd");
-                        }
-                    }
+                    txtFirstName.Text = employee.FirstName;
+                    txtLastName.Text = employee.LastName;
+                    txtEmail.Text = employee.Email;
+                    txtPhone.Text = employee.Phone;
+                    txtHireDate.Text = employee.HireDate.ToString("yyyy-MM-dd");
                 }
             }
             catch (Exception ex)
@@ -52,33 +46,21 @@ namespace EmployeeManagementSystem
 
         protected void BtnSave_Click(object sender, EventArgs e)
         {
-            bool isUpdate = !string.IsNullOrEmpty(hiddenEmployeeID.Value);
-            string query = isUpdate
-                ? "UPDATE Employees SET FirstName=@FirstName, LastName=@LastName, Email=@Email, Phone=@Phone, HireDate=@HireDate WHERE EmployeeID=@EmployeeID"
-                : "INSERT INTO Employees (FirstName, LastName, Email, Phone, HireDate) VALUES (@FirstName, @LastName, @Email, @Phone, @HireDate)";
-
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionString))
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                Employee employee = new Employee
                 {
-                    cmd.Parameters.AddWithValue("@FirstName", txtFirstName.Text);
-                    cmd.Parameters.AddWithValue("@LastName", txtLastName.Text);
-                    cmd.Parameters.AddWithValue("@Email", txtEmail.Text);
-                    cmd.Parameters.AddWithValue("@Phone", txtPhone.Text);
-                    cmd.Parameters.AddWithValue("@HireDate", DateTime.Parse(txtHireDate.Text));
+                    EmployeeID = string.IsNullOrEmpty(hiddenEmployeeID.Value) ? 0 : Convert.ToInt32(hiddenEmployeeID.Value),
+                    FirstName = txtFirstName.Text,
+                    LastName = txtLastName.Text,
+                    Email = txtEmail.Text,
+                    Phone = txtPhone.Text,
+                    HireDate = DateTime.Parse(txtHireDate.Text)
+                };
 
-                    if (isUpdate)
-                    {
-                        cmd.Parameters.AddWithValue("@EmployeeID", Convert.ToInt32(hiddenEmployeeID.Value));
-                    }
-
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                }
-
+                _employeeService.SaveEmployee(employee);
                 ClearForm();
-                ShowSuccess(isUpdate ? "Employee updated successfully." : "Employee created successfully.");
+                ShowSuccess(employee.EmployeeID > 0 ? "Employee updated successfully." : "Employee created successfully.");
             }
             catch (Exception ex)
             {

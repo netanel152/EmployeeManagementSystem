@@ -1,17 +1,20 @@
-﻿using System;
+﻿// EmployeeList.aspx.cs
+using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Data.SqlClient;
-using System.Data;
+using EmployeeManagementSystem.Services;
+using EmployeeManagementSystem.Models;
+using System.Collections.Generic;
 
 namespace EmployeeManagementSystem
 {
     public partial class EmployeeList : Page
     {
-        private string _connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["EmployeeDB"].ConnectionString;
+        private EmployeeService _employeeService;
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            _employeeService = new EmployeeService(System.Configuration.ConfigurationManager.ConnectionStrings["EmployeeDB"].ConnectionString);
             if (!IsPostBack)
             {
                 ViewState["SortExpression"] = "EmployeeID";
@@ -25,15 +28,8 @@ namespace EmployeeManagementSystem
             string sortExpression = ViewState["SortExpression"].ToString();
             string sortDirection = ViewState["SortDirection"].ToString();
 
-            string query = "SELECT * FROM Employees";
-            if (!string.IsNullOrEmpty(searchTerm))
-            {
-                query += " WHERE (FirstName = @SearchTerm) OR (Email = @SearchTerm)";
-            }
-            query += $" ORDER BY {sortExpression} {sortDirection}";
-
-            DataTable employees = GetData(query, searchTerm);
-            if (employees.Rows.Count > 0)
+            List<Employee> employees = _employeeService.GetEmployees(searchTerm, sortExpression, sortDirection);
+            if (employees.Count > 0)
             {
                 GridView1.DataSource = employees;
                 GridView1.DataBind();
@@ -45,33 +41,6 @@ namespace EmployeeManagementSystem
                 GridView1.DataSource = null;
                 GridView1.DataBind();
             }
-        }
-
-        private DataTable GetData(string query, string searchTerm = "")
-        {
-            DataTable dt = new DataTable();
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_connectionString))
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    if (!string.IsNullOrEmpty(searchTerm))
-                    {
-                        cmd.Parameters.AddWithValue("@SearchTerm", searchTerm);
-                    }
-
-                    con.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        dt.Load(reader);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                ShowError("An error occurred while fetching data.");
-            }
-            return dt;
         }
 
         protected void BtnSearch_Click(object sender, EventArgs e)
@@ -101,7 +70,8 @@ namespace EmployeeManagementSystem
                 }
                 else if (e.CommandName == "DeleteEmployee")
                 {
-                    DeleteEmployee(employeeId);
+                    _employeeService.DeleteEmployee(employeeId);
+                    LoadEmployees();
                 }
             }
             else
@@ -146,32 +116,6 @@ namespace EmployeeManagementSystem
                 return sortDirection == "ASC" ? "▲" : "▼";
             }
             return string.Empty;
-        }
-
-        private void DeleteEmployee(int employeeId)
-        {
-            string query = "DELETE FROM Employees WHERE EmployeeID = @EmployeeID";
-            ExecuteQuery(query, employeeId);
-            ShowSuccess("Employee deleted successfully.");
-            LoadEmployees();
-        }
-
-        private void ExecuteQuery(string query, int employeeId)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_connectionString))
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@EmployeeID", employeeId);
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                ShowError("An error occurred while processing the request.");
-            }
         }
 
         private void ShowError(string message)
