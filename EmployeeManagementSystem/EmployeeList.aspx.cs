@@ -14,17 +14,23 @@ namespace EmployeeManagementSystem
         {
             if (!IsPostBack)
             {
+                ViewState["SortExpression"] = "EmployeeID";
+                ViewState["SortDirection"] = "ASC";
                 LoadEmployees();
             }
         }
 
         private void LoadEmployees(string searchTerm = "")
         {
+            string sortExpression = ViewState["SortExpression"].ToString();
+            string sortDirection = ViewState["SortDirection"].ToString();
+
             string query = "SELECT * FROM Employees";
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 query += " WHERE (FirstName = @SearchTerm) OR (Email = @SearchTerm)";
             }
+            query += $" ORDER BY {sortExpression} {sortDirection}";
 
             DataTable employees = GetData(query, searchTerm);
             if (employees.Rows.Count > 0)
@@ -87,16 +93,59 @@ namespace EmployeeManagementSystem
 
         protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
         {
-            int employeeId = Convert.ToInt32(e.CommandArgument);
+            if (e.CommandArgument != null && int.TryParse(e.CommandArgument.ToString(), out int employeeId))
+            {
+                if (e.CommandName == "UpdateEmployee")
+                {
+                    Response.Redirect($"EmployeeForm.aspx?EmployeeID={employeeId}");
+                }
+                else if (e.CommandName == "DeleteEmployee")
+                {
+                    DeleteEmployee(employeeId);
+                }
+            }
+            else
+            {
+                ShowError("Invalid employee ID. Please try again.");
+            }
+        }
 
-            if (e.CommandName == "UpdateEmployee")
+        protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            GridView1.PageIndex = e.NewPageIndex;
+            LoadEmployees(txtSearch.Text.Trim());
+        }
+
+        protected void GridView1_Sorting(object sender, GridViewSortEventArgs e)
+        {
+            string sortExpression = e.SortExpression;
+            string sortDirection = ViewState["SortDirection"].ToString();
+
+            if (ViewState["SortExpression"].ToString() == sortExpression)
             {
-                Response.Redirect($"EmployeeForm.aspx?EmployeeID={employeeId}");
+                sortDirection = (sortDirection == "ASC") ? "DESC" : "ASC";
             }
-            else if (e.CommandName == "DeleteEmployee")
+            else
             {
-                DeleteEmployee(employeeId);
+                sortDirection = "ASC";
             }
+
+            ViewState["SortExpression"] = sortExpression;
+            ViewState["SortDirection"] = sortDirection;
+
+            LoadEmployees(txtSearch.Text.Trim());
+        }
+
+        protected string GetSortDirection(string column)
+        {
+            string sortExpression = ViewState["SortExpression"].ToString();
+            string sortDirection = ViewState["SortDirection"].ToString();
+
+            if (sortExpression == column)
+            {
+                return sortDirection == "ASC" ? "▲" : "▼";
+            }
+            return string.Empty;
         }
 
         private void DeleteEmployee(int employeeId)

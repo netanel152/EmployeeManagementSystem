@@ -12,41 +12,61 @@
             </div>
         </div>
 
+        <!-- GridView with Paging, Sorting enabled, and Sort Direction Indicator -->
         <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="EmployeeID"
             PageSize="10" CssClass="table table-striped table-bordered text-center"
-            EmptyDataText="No employees found." OnRowCommand="GridView1_RowCommand">
+            EmptyDataText="No employees found." AllowPaging="True" AllowSorting="True"
+            OnRowCommand="GridView1_RowCommand" OnPageIndexChanging="GridView1_PageIndexChanging" OnSorting="GridView1_Sorting">
             <Columns>
-                <asp:TemplateField HeaderText="Id">
+                <asp:TemplateField SortExpression="EmployeeID">
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="lnkSortEmployeeID" runat="server" CommandName="Sort" CommandArgument="EmployeeID">Id <%# GetSortDirection("EmployeeID") %></asp:LinkButton>
+                    </HeaderTemplate>
                     <ItemTemplate>
                         <span class="d-block" style="color: black; text-align: center;"><%# Eval("EmployeeID") %></span>
                     </ItemTemplate>
                 </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="First Name">
+                <asp:TemplateField SortExpression="FirstName">
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="lnkSortFirstName" runat="server" CommandName="Sort" CommandArgument="FirstName">First Name <%# GetSortDirection("FirstName") %></asp:LinkButton>
+                    </HeaderTemplate>
                     <ItemTemplate>
                         <span class="d-block" style="color: black; text-align: center;"><%# Eval("FirstName") %></span>
                     </ItemTemplate>
                 </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="Last Name">
+                <asp:TemplateField SortExpression="LastName">
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="lnkSortLastName" runat="server" CommandName="Sort" CommandArgument="LastName">Last Name <%# GetSortDirection("LastName") %></asp:LinkButton>
+                    </HeaderTemplate>
                     <ItemTemplate>
                         <span class="d-block" style="color: black; text-align: center;"><%# Eval("LastName") %></span>
                     </ItemTemplate>
                 </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="Email">
+                <asp:TemplateField SortExpression="Email">
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="lnkSortEmail" runat="server" CommandName="Sort" CommandArgument="Email">Email <%# GetSortDirection("Email") %></asp:LinkButton>
+                    </HeaderTemplate>
                     <ItemTemplate>
                         <span class="d-block" style="color: black; text-align: center;"><%# Eval("Email") %></span>
                     </ItemTemplate>
                 </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="Phone">
+                <asp:TemplateField SortExpression="Phone">
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="lnkSortPhone" runat="server" CommandName="Sort" CommandArgument="Phone">Phone <%# GetSortDirection("Phone") %></asp:LinkButton>
+                    </HeaderTemplate>
                     <ItemTemplate>
                         <span class="d-block" style="color: black; text-align: center;"><%# Eval("Phone") %></span>
                     </ItemTemplate>
                 </asp:TemplateField>
 
-                <asp:TemplateField HeaderText="Hire Date">
+                <asp:TemplateField SortExpression="HireDate">
+                    <HeaderTemplate>
+                        <asp:LinkButton ID="lnkSortHireDate" runat="server" CommandName="Sort" CommandArgument="HireDate">Hire Date <%# GetSortDirection("HireDate") %></asp:LinkButton>
+                    </HeaderTemplate>
                     <ItemTemplate>
                         <span class="d-block" style="color: black; text-align: center;"><%# Eval("HireDate", "{0:yyyy-MM-dd}") %></span>
                     </ItemTemplate>
