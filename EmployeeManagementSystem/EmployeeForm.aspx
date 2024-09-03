@@ -6,27 +6,27 @@
 
         <asp:HiddenField ID="hiddenEmployeeID" runat="server" />
 
-        <div class="form-group">
+        <div class="form-group mt-3">
             <asp:Label ID="lblFirstName" runat="server" Text="First Name:" AssociatedControlID="txtFirstName"></asp:Label>
             <asp:TextBox ID="txtFirstName" runat="server" CssClass="form-control"></asp:TextBox>
         </div>
 
-        <div class="form-group">
+        <div class="form-group mt-3">
             <asp:Label ID="lblLastName" runat="server" Text="Last Name:" AssociatedControlID="txtLastName"></asp:Label>
             <asp:TextBox ID="txtLastName" runat="server" CssClass="form-control"></asp:TextBox>
         </div>
 
-        <div class="form-group">
+        <div class="form-group mt-3">
             <asp:Label ID="lblEmail" runat="server" Text="Email:" AssociatedControlID="txtEmail"></asp:Label>
             <asp:TextBox ID="txtEmail" runat="server" CssClass="form-control"></asp:TextBox>
         </div>
 
-        <div class="form-group">
+        <div class="form-group mt-3">
             <asp:Label ID="lblPhone" runat="server" Text="Phone:" AssociatedControlID="txtPhone"></asp:Label>
             <asp:TextBox ID="txtPhone" runat="server" CssClass="form-control"></asp:TextBox>
         </div>
 
-        <div class="form-group">
+        <div class="form-group mt-3">
             <asp:Label ID="lblHireDate" runat="server" Text="Hire Date:" AssociatedControlID="txtHireDate"></asp:Label>
             <asp:TextBox ID="txtHireDate" runat="server" CssClass="form-control"></asp:TextBox>
         </div>
