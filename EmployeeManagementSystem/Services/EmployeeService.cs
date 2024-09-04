@@ -10,6 +10,7 @@ namespace EmployeeManagementSystem.Services
 
         public EmployeeService(string connectionString)
         {
+            // Initialize the repository with the provided connection string
             _repository = new EmployeeRepository(connectionString);
         }
 

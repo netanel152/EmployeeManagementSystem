@@ -12,9 +12,12 @@ namespace EmployeeManagementSystem
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Initialize the EmployeeService with a connection string from configuration
             _employeeService = new EmployeeService(ConfigurationManager.ConnectionStrings["EmployeeDB"].ConnectionString);
+
             if (!IsPostBack)
             {
+                // Load employee details if an EmployeeID is provided in the query string
                 if (Request.QueryString["EmployeeID"] != null)
                 {
                     int employeeId = Convert.ToInt32(Request.QueryString["EmployeeID"]);
@@ -28,7 +31,9 @@ namespace EmployeeManagementSystem
         {
             try
             {
+                // Retrieve employee details and populate the form fields
                 Employee employee = _employeeService.GetEmployeeById(employeeId);
+
                 if (employee != null)
                 {
                     txtFirstName.Text = employee.FirstName;

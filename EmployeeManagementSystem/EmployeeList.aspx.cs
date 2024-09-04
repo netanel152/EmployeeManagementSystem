@@ -14,9 +14,12 @@ namespace EmployeeManagementSystem
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            // Initialize the EmployeeService with a connection string from configuration
             _employeeService = new EmployeeService(ConfigurationManager.ConnectionStrings["EmployeeDB"].ConnectionString);
+
             if (!IsPostBack)
             {
+                // Set default sorting and load the employee list
                 ViewState["SortExpression"] = "EmployeeID";
                 ViewState["SortDirection"] = "ASC";
                 LoadEmployees();
@@ -28,7 +31,9 @@ namespace EmployeeManagementSystem
             string sortExpression = ViewState["SortExpression"].ToString();
             string sortDirection = ViewState["SortDirection"].ToString();
 
+            // Fetch sorted and filtered employee list from the service
             List<Employee> employees = _employeeService.GetEmployees(searchTerm, sortExpression, sortDirection);
+
             if (employees.Count > 0)
             {
                 GridView1.DataSource = employees;

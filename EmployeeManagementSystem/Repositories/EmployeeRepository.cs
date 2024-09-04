@@ -89,6 +89,7 @@ namespace EmployeeManagementSystem.Repositories
 
         public void SaveEmployee(Employee employee)
         {
+            // Determine if we are inserting a new employee or updating an existing one
             string query = employee.EmployeeID > 0
                 ? "UPDATE Employees SET FirstName=@FirstName, LastName=@LastName, Email=@Email, Phone=@Phone, HireDate=@HireDate WHERE EmployeeID=@EmployeeID"
                 : "INSERT INTO Employees (FirstName, LastName, Email, Phone, HireDate) VALUES (@FirstName, @LastName, @Email, @Phone, @HireDate)";
